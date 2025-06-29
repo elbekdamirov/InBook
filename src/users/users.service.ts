@@ -62,4 +62,17 @@ export class UsersService {
   remove(id: number) {
     return `This action removes a #${id} user`;
   }
+
+  async activateUser(activation_link: string) {
+    const user = await this.userModel.findOne({ where: { activation_link } });
+    if (!user) {
+      throw new NotFoundException(
+        "Aktivatsiya linki noto'g'ri yoki muddat tugagan"
+      );
+    }
+    user.is_active = true;
+    await user.save();
+
+    return { message: "Account muvaffaqiyatli faollashtirildi" };
+  }
 }
