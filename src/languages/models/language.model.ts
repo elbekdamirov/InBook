@@ -1,4 +1,13 @@
-import { Table, Column, Model, DataType } from "sequelize-typescript";
+import {
+  Table,
+  Column,
+  Model,
+  DataType,
+  BelongsToMany,
+  BelongsTo,
+  HasMany,
+} from "sequelize-typescript";
+import { BookVersion } from "../../book-version/models/book-version.model";
 
 interface ILanguageCreationAttr {
   code: string;
@@ -33,4 +42,7 @@ export class Language extends Model<Language, ILanguageCreationAttr> {
     allowNull: false,
   })
   declare flag: string;
+
+  @HasMany(() => BookVersion)
+  bookVersion: BookVersion[];
 }

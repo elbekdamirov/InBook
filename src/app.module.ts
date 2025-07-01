@@ -17,6 +17,14 @@ import { CategoriesModule } from "./categories/categories.module";
 import { TelegrafModule } from "nestjs-telegraf";
 import { BOT_NAME } from "./app.contstants";
 import { BotModule } from "./bot/bot.module";
+import { BooksModule } from "./books/books.module";
+import { BookVersionModule } from "./book-version/book-version.module";
+import { Book } from "./books/models/book.model";
+import { BookVersion } from "./book-version/models/book-version.model";
+import { AudioBookModule } from "./audio-book/audio-book.module";
+import { AudioBook } from "./audio-book/models/audio-book.model";
+import { AudioPartsModule } from "./audio-parts/audio-parts.module";
+import { AudioPart } from "./audio-parts/models/audio-part.model";
 
 @Module({
   imports: [
@@ -41,7 +49,17 @@ import { BotModule } from "./bot/bot.module";
       username: process.env.PG_USER,
       password: process.env.PG_PASSWORD,
       database: process.env.PG_DB,
-      models: [User, Admin, Genre, Language, Author],
+      models: [
+        User,
+        Admin,
+        Genre,
+        Language,
+        Author,
+        Book,
+        BookVersion,
+        AudioBook,
+        AudioPart,
+      ],
       autoLoadModels: true,
       logging: false,
       sync: { alter: true },
@@ -64,6 +82,14 @@ import { BotModule } from "./bot/bot.module";
     CategoriesModule,
 
     BotModule,
+
+    BooksModule,
+
+    BookVersionModule,
+
+    AudioBookModule,
+
+    AudioPartsModule,
   ],
   controllers: [],
   providers: [],

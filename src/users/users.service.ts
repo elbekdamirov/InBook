@@ -33,7 +33,7 @@ export class UsersService {
   }
 
   async findOne(id: number) {
-    const user = await this.userModel.findByPk(id);
+    const user = await this.userModel.findByPk(id, { include: { all: true } });
 
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);

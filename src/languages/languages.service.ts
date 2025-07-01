@@ -16,11 +16,13 @@ export class LanguagesService {
   }
 
   async findAll(): Promise<Language[]> {
-    return this.languageModel.findAll();
+    return this.languageModel.findAll({ include: { all: true } });
   }
 
   async findOne(id: number): Promise<Language> {
-    const language = await this.languageModel.findByPk(id);
+    const language = await this.languageModel.findByPk(id, {
+      include: { all: true },
+    });
     if (!language)
       throw new NotFoundException(`Language with id ${id} not found`);
     return language;
