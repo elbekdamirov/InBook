@@ -13,10 +13,22 @@ import { LanguagesModule } from "./languages/languages.module";
 import { Language } from "./languages/models/language.model";
 import { AuthorsModule } from "./authors/authors.module";
 import { Author } from "./authors/models/author.model";
-import { CategoriesModule } from './categories/categories.module';
+import { CategoriesModule } from "./categories/categories.module";
+import { TelegrafModule } from "nestjs-telegraf";
+import { BOT_NAME } from "./app.contstants";
+import { BotModule } from "./bot/bot.module";
 
 @Module({
   imports: [
+    TelegrafModule.forRootAsync({
+      botName: BOT_NAME,
+      useFactory: () => ({
+        token: process.env.BOT_TOKEN!,
+        middlewares: [],
+        include: [BotModule],
+      }),
+    }),
+
     ConfigModule.forRoot({
       envFilePath: ".env",
       isGlobal: true,
@@ -50,6 +62,8 @@ import { CategoriesModule } from './categories/categories.module';
     AuthorsModule,
 
     CategoriesModule,
+
+    BotModule,
   ],
   controllers: [],
   providers: [],
