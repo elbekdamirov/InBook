@@ -12,7 +12,6 @@ import { UsersService } from "./users.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { UserGuard } from "../common/guards/user.guard";
-import { RolesGuard } from "../common/guards/role.guard";
 import { SelfGuard } from "../common/guards/self.guard";
 
 @Controller("users")

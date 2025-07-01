@@ -34,7 +34,6 @@ export class AuthService {
       id: user.id,
       is_active: user.is_active,
       is_premium: user.is_premium,
-      role: "user",
     };
 
     const [accessToken, refreshToken] = await Promise.all([
@@ -57,7 +56,6 @@ export class AuthService {
     const payload = {
       id: admin.id,
       is_creator: admin.is_creator,
-      role: "admin",
     };
 
     const [accessToken, refreshToken] = await Promise.all([
