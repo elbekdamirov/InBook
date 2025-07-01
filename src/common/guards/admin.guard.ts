@@ -45,10 +45,6 @@ export class AdminGuard implements CanActivate {
         throw new UnauthorizedException("Unauthorized User");
       }
 
-      if (!payload.is_active) {
-        throw new ForbiddenException("Siz faol foydalanuvchi emassiz");
-      }
-
       req.user = payload;
       return true;
     }
