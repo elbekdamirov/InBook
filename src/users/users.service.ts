@@ -64,15 +64,33 @@ export class UsersService {
   }
 
   async activateUser(activation_link: string) {
-    const user = await this.userModel.findOne({ where: { activation_link } });
-    if (!user) {
-      throw new NotFoundException(
-        "Aktivatsiya linki noto'g'ri yoki muddat tugagan"
-      );
+    if (!activation_link) {
+      throw new BadRequestException("Activate link not found");
     }
-    user.is_active = true;
-    await user.save();
 
-    return { message: "Account muvaffaqiyatli faollashtirildi" };
+    const updatedUser = await this.userModel.update(
+      { is_active: true },
+      {
+        where: {
+          activation_link,
+          is_active: false,
+        },
+        returning: true,
+      }
+    );
+    if (!updatedUser[1][0]) {
+      throw new BadRequestException("User already activated");
+    }
+    return {
+      message: "User activated succesfully",
+    };
+  }
+
+  async updateRefreshToken(id: number, refresh_token: string) {
+    const updatedUser = await this.userModel.update(
+      { refresh_token },
+      { where: { id } }
+    );
+    return updatedUser;
   }
 }

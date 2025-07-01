@@ -1,6 +1,9 @@
 import {
+  BadRequestException,
   ConflictException,
+  ForbiddenException,
   Injectable,
+  NotFoundException,
   ServiceUnavailableException,
   UnauthorizedException,
 } from "@nestjs/common";
@@ -31,6 +34,7 @@ export class AuthService {
       id: user.id,
       is_active: user.is_active,
       is_premium: user.is_premium,
+      role: "user",
     };
 
     const [accessToken, refreshToken] = await Promise.all([
@@ -53,6 +57,7 @@ export class AuthService {
     const payload = {
       id: admin.id,
       is_creator: admin.is_creator,
+      role: "admin",
     };
 
     const [accessToken, refreshToken] = await Promise.all([
@@ -122,6 +127,28 @@ export class AuthService {
     return { message: "Tizimga xush kelibsiz", id: user.id, accessToken };
   }
 
+  async signout(refreshToken: string, res: Response) {
+    let userData: any;
+    try {
+      userData = await this.jwtService.verify(refreshToken, {
+        secret: process.env.REFRESH_TOKEN_KEY,
+      });
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+
+    if (!userData) {
+      throw new ForbiddenException("User not verified");
+    }
+
+    await this.usersService.updateRefreshToken(userData.id, "");
+
+    res.clearCookie("refreshToken");
+    return {
+      message: "User logged out successfully",
+    };
+  }
+
   //for admin
   async register(createAdminDto: CreateAdminDto) {
     const candidate = await this.adminService.findByEmail(createAdminDto.email);
@@ -160,5 +187,49 @@ export class AuthService {
 
   async activate(activation_link: string) {
     return this.usersService.activateUser(activation_link);
+  }
+
+  async refreshToken(
+    userId: number,
+    refreshTokenFromCookie: string,
+    res: Response
+  ) {
+    const decodedToken = await this.jwtService.decode(refreshTokenFromCookie);
+
+    if (userId !== decodedToken["id"]) {
+      throw new ForbiddenException("Ruxsat etilmagan");
+    }
+
+    const user = await this.usersService.findOne(userId);
+
+    if (!user || !user.refresh_token) {
+      throw new NotFoundException("user not found");
+    }
+
+    const tokenMatch = await bcrypt.compare(
+      refreshTokenFromCookie,
+      user.refresh_token
+    );
+
+    if (!tokenMatch) {
+      throw new ForbiddenException("Forbidden");
+    }
+
+    const { accessToken, refreshToken } = await this.generateTokens(user);
+
+    const refresh_token = await bcrypt.hash(refreshToken, 7);
+    await this.usersService.updateRefreshToken(user.id, refresh_token);
+
+    res.cookie("refreshToken", refreshToken, {
+      maxAge: Number(process.env.COOKIE_TIME),
+      httpOnly: true,
+    });
+
+    const response = {
+      message: "User refreshed",
+      userId: user.id,
+      accessToken: accessToken,
+    };
+    return response;
   }
 }
