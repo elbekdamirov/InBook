@@ -7,12 +7,14 @@ import {
   Param,
   Delete,
   UseGuards,
+  HttpCode,
 } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { UserGuard } from "../common/guards/user.guard";
 import { SelfGuard } from "../common/guards/self.guard";
+import { PhoneUserDto } from "./dto/phone-user.dto";
 
 @Controller("users")
 export class UsersController {
@@ -21,6 +23,12 @@ export class UsersController {
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
+  }
+
+  @HttpCode(200)
+  @Post("send-otp")
+  newOtp(@Body() phoneUserDto: PhoneUserDto) {
+    return this.usersService.newOtp(phoneUserDto);
   }
 
   @UseGuards(UserGuard)

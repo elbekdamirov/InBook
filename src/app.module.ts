@@ -25,6 +25,8 @@ import { AudioBookModule } from "./audio-book/audio-book.module";
 import { AudioBook } from "./audio-book/models/audio-book.model";
 import { AudioPartsModule } from "./audio-parts/audio-parts.module";
 import { AudioPart } from "./audio-parts/models/audio-part.model";
+import { Bot } from "./bot/models/bot.model";
+import { Otp } from "./users/models/otp.model";
 
 @Module({
   imports: [
@@ -59,6 +61,8 @@ import { AudioPart } from "./audio-parts/models/audio-part.model";
         BookVersion,
         AudioBook,
         AudioPart,
+        Bot,
+        Otp,
       ],
       autoLoadModels: true,
       logging: false,
