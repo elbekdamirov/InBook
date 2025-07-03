@@ -14,7 +14,8 @@ import * as otpGenerator from "otp-generator";
 import { BotService } from "../bot/bot.service";
 import { Otp } from "./models/otp.model";
 import { AddMinutesToDate } from "../common/helpers/addMinutes";
-import { encode } from "../common/helpers/crypto";
+import { decode, encode } from "../common/helpers/crypto";
+import { VerifyOtpDto } from "./dto/verfiy-otp.dto";
 
 @Injectable()
 export class UsersService {
@@ -137,7 +138,57 @@ export class UsersService {
 
     return {
       message: "OTP botga yuborildi",
-      verification_code: encodedData,
+      verification_key: encodedData,
+    };
+  }
+
+  async verifyOtp(verifyOtpDto: VerifyOtpDto) {
+    const { phone, verification_key, otp } = verifyOtpDto;
+    const decodedData = await decode(verification_key);
+    const details = JSON.parse(decodedData);
+
+    if (details.phone_number != phone) {
+      throw new BadRequestException("Otp bu telefon raqamiga yuborilmagan");
+    }
+
+    const resultOtp = await this.otpModel.findOne({
+      where: { id: details.otp_id },
+    });
+
+    if (resultOtp == null) {
+      throw new BadRequestException("Bunday OTP mavjud emas");
+    }
+
+    if (resultOtp.verified) {
+      throw new BadRequestException("Bu OTP avval tekshirilgan");
+    }
+
+    if (resultOtp.expiration_time < new Date()) {
+      throw new BadRequestException("Bu OTP vaqti o'tib ketgan");
+    }
+
+    if (otp != resultOtp.otp) {
+      throw new BadRequestException("OTP noto'g'ri!");
+    }
+
+    const user = await this.userModel.update(
+      { is_premium: true },
+      {
+        where: { phone },
+        returning: true,
+      }
+    );
+
+    if (!user[1][0]) {
+      throw new BadRequestException("Bunday foydalanuvchi yo'q");
+    }
+
+    resultOtp.verified = true;
+    await resultOtp.save();
+
+    return {
+      message: "Siz premium user bo'ldingiz",
+      user: user[1][0],
     };
   }
 }

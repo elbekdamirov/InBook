@@ -30,6 +30,11 @@ export class BotUpdate {
     await this.botService.onStop(ctx);
   }
 
+  @On("location")
+  async onLocation(@Ctx() ctx: Context) {
+    await this.botService.onLocation(ctx);
+  }
+
   // @On("photo")
   // async onPhoto(@Ctx() ctx: Context) {
   //   if ("photo" in ctx.message!) {
@@ -61,20 +66,6 @@ export class BotUpdate {
   //   if ("animation" in ctx.message!) {
   //     console.log(ctx.message.animation);
   //     await ctx.replyWithAnimation(String(ctx.message.animation.file_id));
-  //   }
-  // }
-
-  // @On("location")
-  // async onLocation(@Ctx() ctx: Context) {
-  //   if ("location" in ctx.message!) {
-  //     console.log(ctx.message.location);
-  //     await ctx.reply(String(ctx.message.location.latitude));
-  //     await ctx.reply(String(ctx.message.location.longitude));
-  //     await ctx.reply(String(ctx.message.location.horizontal_accuracy));
-  //     await ctx.replyWithLocation(
-  //       ctx.message.location.latitude,
-  //       ctx.message.location.longitude
-  //     );
   //   }
   // }
 
@@ -193,18 +184,13 @@ export class BotUpdate {
   //   await ctx.replyWithHTML("Bir bosildi");
   // }
 
-  // @On("text")
-  // async onText(@Ctx() ctx: Context) {
-  //   if ("text" in ctx.message!) {
-  //     if (ctx.message.text == "hi") {
-  //       ctx.replyWithHTML(`<b>Hello</b>`);
-  //     }
-  //     ctx.replyWithHTML(ctx.message.text);
-  //   }
-  // }
+  @On("text")
+  async onText(@Ctx() ctx: Context) {
+    await this.botService.onText(ctx);
+  }
 
-  // @On("message")
-  // async onMessage(@Ctx() ctx: Context) {
-  //   ctx.reply("Nazarda tutilmagan xatolik");
-  // }
+  @On("message")
+  async onMessage(@Ctx() ctx: Context) {
+    ctx.reply("❌Nazarda tutilmagan xatolik");
+  }
 }

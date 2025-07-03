@@ -27,6 +27,15 @@ import { AudioPartsModule } from "./audio-parts/audio-parts.module";
 import { AudioPart } from "./audio-parts/models/audio-part.model";
 import { Bot } from "./bot/models/bot.model";
 import { Otp } from "./users/models/otp.model";
+import { Library } from "./bot/library/models/library.model";
+import { Collection } from "./collection/entities/collection.entity";
+import { BookCollection } from "./book-collection/entities/book-collection.entity";
+import { Subscription } from "./subscription/entities/subscription.entity";
+import { Bookmark } from "./bookmarks/entities/bookmark.entity";
+import { BookCollectionsModule } from "./book-collection/book-collection.module";
+import { SubscriptionsModule } from "./subscription/subscription.module";
+import { BookmarksModule } from "./bookmarks/bookmarks.module";
+import { CollectionsModule } from "./collection/collection.module";
 
 @Module({
   imports: [
@@ -63,6 +72,11 @@ import { Otp } from "./users/models/otp.model";
         AudioPart,
         Bot,
         Otp,
+        Library,
+        Collection,
+        BookCollection,
+        Subscription,
+        Bookmark,
       ],
       autoLoadModels: true,
       logging: false,
@@ -94,6 +108,14 @@ import { Otp } from "./users/models/otp.model";
     AudioBookModule,
 
     AudioPartsModule,
+
+    CollectionsModule,
+
+    BookCollectionsModule,
+
+    SubscriptionsModule,
+
+    BookmarksModule,
   ],
   controllers: [],
   providers: [],
